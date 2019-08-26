@@ -3,7 +3,7 @@ use libsts::Save;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
-use ststracker_base::{GetRequest, UpdateRequest};
+use ststracker_base::api::{GameState, UpdateRequest};
 
 fn app() -> Result<(), &'static str> {
     // load the settings file
@@ -82,9 +82,9 @@ fn app() -> Result<(), &'static str> {
 fn update_server(server_addr: &str, save: Save, backend_api_key: &str) -> Result<(), &'static str> {
     let request = reqwest::Client::new()
         .post(server_addr)
-        .json(&UpdateRequest::from_get_request(
-            GetRequest::new(save.cards, save.relics),
-            backend_api_key.clone(),
+        .json(&UpdateRequest::new(
+            GameState::new(save.cards, save.relics),
+            backend_api_key,
         ))
         .send();
 
